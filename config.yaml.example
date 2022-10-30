@@ -1,0 +1,27 @@
+nodes:
+  sentry-01:
+      image: green
+      type: sentry
+      validator: val-01
+  sentry-02:
+      image: green
+      type: sentry
+      validator: val-02
+  -sentry-03:
+      image: green
+      type: sentry
+      validator: val-03
+  val-01:
+      image: blue
+      sentry: sentry-01
+      type: validator
+  val-02:
+      image: green
+      sentry: sentry-02
+      type: validator
+  val-03:
+     image: green
+     sentry: sentry-03
+     type: validator
+network: osmosis
+network_name: bldr-osmosis-1

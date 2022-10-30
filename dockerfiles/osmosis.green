@@ -1,0 +1,21 @@
+# taken from github.com/cloudnull/protocol-builds
+
+ARG distro_version
+FROM golang:1.19.2-buster as BUILD
+ARG git_repository=https://github.com/osmosis-labs/osmosis
+ARG git_version=v11.0.0
+RUN git clone --recursive --branch $git_version $git_repository /build_dir
+WORKDIR /build_dir
+RUN make build
+RUN cp "$(ldd build/osmosisd | awk '/libwasmvm.x86_64.so/ {print $3}')" build/libwasmvm.x86_64.so
+
+FROM gcr.io/distroless/base-debian11:${distro_version}
+ARG git_repository=https://github.com/osmosis-labs/osmosis
+ARG git_version=main
+WORKDIR /usr/local/bin
+COPY --from=BUILD /build_dir/build/osmosisd /usr/local/bin/osmosisd
+WORKDIR /usr/local/lib/osmosis
+COPY --from=BUILD /build_dir/build/libwasmvm.x86_64.so /usr/local/lib/osmosis/libwasmvm.x86_64.so
+COPY --from=BUILD /lib/x86_64-linux-gnu/libgcc_s.so.1 /usr/local/lib/osmosis/libgcc_s.so.1
+ENV LD_LIBRARY_PATH=/usr/local/lib/osmosis
+ENTRYPOINT ["/usr/local/bin/osmosisd"]
