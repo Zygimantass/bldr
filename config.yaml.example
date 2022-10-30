@@ -7,7 +7,7 @@ nodes:
       image: green
       type: sentry
       validator: val-02
-  -sentry-03:
+  sentry-03:
       image: green
       type: sentry
       validator: val-03
