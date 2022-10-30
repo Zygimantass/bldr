@@ -57,7 +57,11 @@ def main():
         except FileNotFoundError:
             pass
 
-    os.makedirs(f"{os.getcwd()}/data/")
+    try:
+        os.makedirs(f"{os.getcwd()}/data/")
+    except FileExistsError:
+        pass
+
     os.makedirs(f"{os.getcwd()}/data/{config['network_name']}")
 
     nb = NetworkBuilder(
